@@ -90,3 +90,18 @@ test('Should prevent start time from being later than end time', () => {
   });
   expect(wrapper.state('startTime')).toBe('17:00');
 });
+
+test('Should prevent end time from being earlier than start time', () => {
+  wrapper.find('#startTime').simulate('change', {
+    target: {
+      value: '19:00' // 7pm
+    }
+  });
+
+  wrapper.find('#endTime').simulate('change', {
+    target: {
+      value: '18:00' // 6pm
+    }
+  });
+  expect(wrapper.state('endTime')).toBe('04:00');
+});
