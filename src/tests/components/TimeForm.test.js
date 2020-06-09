@@ -40,11 +40,20 @@ test('Should prevent change to start time based on being too early', () => {
   expect(wrapper.state('startTime')).toBe('17:00');
 });
 
-test('Should prevent change to start time based on being after end time', () => {
+test('Should prevent change to start time based on being after end of day', () => {
   wrapper.find('#startTime').simulate('change', {
     target: {
       value: '05:00' // 5am
     }
   });
   expect(wrapper.state('startTime')).toBe('17:00');
+});
+
+test('Should update endTime correctly', () => {
+  wrapper.find('#endTime').simulate('change', {
+    target: {
+      value: '22:00'
+    }
+  });
+  expect(wrapper.state('endTime')).toBe('22:00');
 });
