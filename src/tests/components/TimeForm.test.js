@@ -16,6 +16,16 @@ test('Should initialize form with start time 5:00pm and end time 04:00am', () =>
 });
 
 test('Should calculate initial duration at 660 minutes based off 5pm to 4am defaults', () => {
-  const wrapper = shallow( < TimeForm / > );
+  const wrapper = shallow(<TimeForm />);
   expect(wrapper.state('duration')).toBe(660);
+});
+
+test('Should update start time correctly to 6pm', () => {
+  const wrapper = shallow(<TimeForm />);
+  wrapper.find('#startTime').simulate('change', {
+    target: {
+      value: '18:00'
+    }
+  });
+  expect(wrapper.state('startTime')).toBe('18:00');
 });
