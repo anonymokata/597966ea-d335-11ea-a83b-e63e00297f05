@@ -25,7 +25,7 @@ test('Should calculate initial duration at 660 minutes based off 5pm to 4am defa
 test('Should update start time correctly to 6pm', () => {
   wrapper.find('#startTime').simulate('change', {
     target: {
-      value: '18:00'
+      value: '18:00' // 6pm
     }
   });
   expect(wrapper.state('startTime')).toBe('18:00');
@@ -34,7 +34,16 @@ test('Should update start time correctly to 6pm', () => {
 test('Should prevent change to start time based on being too early', () => {
   wrapper.find('#startTime').simulate('change', {
     target: {
-      value: '14:00'
+      value: '14:00' // 2pm
+    }
+  });
+  expect(wrapper.state('startTime')).toBe('17:00');
+});
+
+test('Should prevent change to start time based on being after end time', () => {
+  wrapper.find('#startTime').simulate('change', {
+    target: {
+      value: '05:00' // 5am
     }
   });
   expect(wrapper.state('startTime')).toBe('17:00');
