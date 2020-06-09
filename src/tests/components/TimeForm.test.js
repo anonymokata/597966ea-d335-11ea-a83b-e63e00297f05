@@ -66,3 +66,12 @@ test('Should prevent endTime from changing based on being before start of day', 
   });
   expect(wrapper.state('endTime')).toBe('04:00');
 });
+
+test('Should prevent endTime from changing based on being after end of day', () => {
+  wrapper.find('#endTime').simulate('change', {
+    target: {
+      value: '05:00'
+    }
+  });
+  expect(wrapper.state('endTime')).toBe('04:00');
+});
