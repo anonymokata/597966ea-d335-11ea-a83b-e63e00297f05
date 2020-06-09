@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
 
 const startOfDay = moment({
   'hour': 17
-})
+});
 
 const endOfDay = moment(startOfDay).add(11, 'hours');
 

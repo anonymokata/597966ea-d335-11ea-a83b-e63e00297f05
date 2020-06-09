@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Should correctly render TimeForm 1`] = `
+<div>
+  <form
+    noValidate={true}
+  >
+    <[object Object]
+      InputLabelProps={
+        Object {
+          "shrink": true,
+        }
+      }
+      id="startTime"
+      inputProps={
+        Object {
+          "step": 300,
+        }
+      }
+      label="Start Time"
+      onChange={[Function]}
+      type="time"
+      value="17:00"
+    />
+    <br />
+    <[object Object]
+      InputLabelProps={
+        Object {
+          "shrink": true,
+        }
+      }
+      id="endTime"
+      inputProps={
+        Object {
+          "step": 300,
+        }
+      }
+      label="End Time"
+      onChange={[Function]}
+      type="time"
+      value="04:00"
+    />
+  </form>
+  <button
+    onClick={[Function]}
+  >
+    Update time:
+  </button>
+  <p>
+    5
+  </p>
+</div>
+`;
