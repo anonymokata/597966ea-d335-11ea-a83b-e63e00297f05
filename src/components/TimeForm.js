@@ -20,7 +20,7 @@ const startOfDay = moment({
   'hour': 17
 })
 
-const endOfDay = moment(startOfDay).add(17, 'hours');
+const endOfDay = moment(startOfDay).add(11, 'hours');
 
 export default class TimeForm extends React.Component {
   constructor(props) {
