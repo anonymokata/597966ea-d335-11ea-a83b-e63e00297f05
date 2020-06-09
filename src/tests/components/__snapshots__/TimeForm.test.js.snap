@@ -47,7 +47,7 @@ exports[`Should correctly render TimeForm 1`] = `
     Update time:
   </button>
   <p>
-    5
+    660
   </p>
 </div>
 `;

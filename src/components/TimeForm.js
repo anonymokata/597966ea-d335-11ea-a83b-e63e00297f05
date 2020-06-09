@@ -28,7 +28,7 @@ export default class TimeForm extends React.Component {
     this.state = {
       startTime: startOfDay.format('HH:mm'), // default to minimum babysit time
       endTime: endOfDay.format('HH:mm'), // default to 5 hours later
-      duration: 5
+      duration: null
     }
   }
   handleStartChange = (e) => {
@@ -39,8 +39,8 @@ export default class TimeForm extends React.Component {
       endTimeMoment.add(24, 'hours');
     }
     if(startTimeMoment.isBefore(startOfDay) ||
-      startTimeMoment.isSameOrAfter(endTimeMoment) ||
-      startTimeMoment.isAfter(endOfDay)
+    startTimeMoment.isSameOrAfter(endTimeMoment) ||
+    startTimeMoment.isAfter(endOfDay)
     )
     {
       // do nothing
@@ -55,10 +55,10 @@ export default class TimeForm extends React.Component {
     let endTimeMoment = moment(endTimeValue, 'HH:mm');
     endTimeMoment = this.checkForNextDay(endTimeMoment);
     const startTimeMoment = moment(this.state.startTime, 'HH:mm');
-
+    
     if (endTimeMoment.isBefore(startOfDay) ||
-      endTimeMoment.isSameOrBefore(startTimeMoment) ||
-      endTimeMoment.isAfter(endOfDay)
+    endTimeMoment.isSameOrBefore(startTimeMoment) ||
+    endTimeMoment.isAfter(endOfDay)
     ) {
       // do nothing
     } else {
@@ -67,7 +67,7 @@ export default class TimeForm extends React.Component {
       });
     }
   }
-
+  
   calculateDuration = () => {
     const startTimeMoment = moment(this.state.startTime, 'HH:mm');
     let endTimeMoment = moment(this.state.endTime, 'HH:mm');
@@ -77,7 +77,10 @@ export default class TimeForm extends React.Component {
       duration
     })
   }
-
+  componentWillMount = () => {
+    this.calculateDuration();
+  }
+  
   checkForNextDay = (argMoment) => {
     if (argMoment.hour() < 12) {
       return argMoment.day(startOfDay.day()).add(1, 'day');
