@@ -68,6 +68,15 @@ export default class TimeForm extends React.Component {
     }
   }
   
+  handleFamilyChange = (e) => {
+    const familyName = e.target.value;
+    if(familyName != -1) {
+      this.setState({
+        familyName
+      });
+    }
+  }
+
   calculateDuration = () => {
     const startTimeMoment = moment(this.state.startTime, 'HH:mm');
     let endTimeMoment = moment(this.state.endTime, 'HH:mm');
@@ -105,6 +114,11 @@ export default class TimeForm extends React.Component {
             }}
             onChange={this.handleStartChange}
             value={this.state.startTime}
+            inputProps = {
+              {
+                step: 900, // 5 min
+              }
+            }
           />
           <br />
           <TextField
@@ -115,15 +129,34 @@ export default class TimeForm extends React.Component {
               shrink: true,
             }}
             inputProps={{
-              step: 300, // 5 min
+              step: 900, // 5 min
             }}
             onChange={this.handleEndChange}
             value={this.state.endTime}
           />
+          <br />
+          <br />
+          <label htmlFor="family">Which family: </label>
+          <select
+            name="family"
+            value={this.state.familyName}
+            onChange={this.handleFamilyChange}
+          >
+            <option value="-1">---</option>
+            <option value="a">Addams</option>
+            <option value="b">Bennett</option>
+            <option value="c">Church</option>
+          </select>
         </form>
+        <br/>
         <button
           onClick={this.calculateDuration}
-        >Update time:</button><p>{this.state.duration}</p>
+        >
+          Update time:
+        </button>
+        <p>{this.state.duration}</p>
+        <p>{this.state.familyName}</p>
+
       </div>
     )
   }
