@@ -76,6 +76,7 @@ exports[`Should correctly render TimeForm 1`] = `
   </form>
   <br />
   <button
+    disabled={true}
     onClick={[Function]}
   >
     Update time:
@@ -83,6 +84,5 @@ exports[`Should correctly render TimeForm 1`] = `
   <p>
     660
   </p>
-  <p />
 </div>
 `;

@@ -152,11 +152,19 @@ export default class TimeForm extends React.Component {
         <br/>
         <button
           onClick={this.calculateDuration}
+          disabled={!this.state.familyName}
         >
           Update time:
         </button>
         <p>{this.state.duration}</p>
-        <p>{this.state.familyName}</p>
+        {this.state.familyName && (<div>
+            Family Time Cutoffs for family {this.state.familyName}
+            <ul>
+              {this.state.familyName == 'a' && (<li>Pays $15 per hour before 11pm, and $20 per hour the rest of the night</li>)}
+              {this.state.familyName == 'b' && (<li>Pays $12 per hour before 10pm, $8 between 10 and 12, and $16 the rest of the night</li>)}
+              {this.state.familyName == 'c' && (<li>Pays $21 per hour before 9pm, then $15 the rest of the night</li>)}
+            </ul>
+        </div>)}
 
       </div>
     )
