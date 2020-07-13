@@ -114,3 +114,17 @@ test('Should change family name correctly', () => {
   });
   expect(wrapper.state('familyName')).toBe('b');
 });
+
+test('Should prevent family name returning to default', () => {
+  wrapper.find('#family').simulate('change', {
+    target: {
+      value: 'b'
+    }
+  });
+  wrapper.find('#family').simulate('change', {
+    target: {
+      value: '-1'
+    }
+  });
+  expect(wrapper.state('familyName')).toBe('b');
+})
