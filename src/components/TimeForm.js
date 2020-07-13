@@ -141,6 +141,7 @@ export default class TimeForm extends React.Component {
             name="family"
             value={this.state.familyName}
             onChange={this.handleFamilyChange}
+            id="family"
           >
             <option value="-1">---</option>
             <option value="a">Addams</option>

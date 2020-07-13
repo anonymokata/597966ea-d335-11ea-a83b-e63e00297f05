@@ -14,7 +14,7 @@ exports[`Should correctly render TimeForm 1`] = `
       id="startTime"
       inputProps={
         Object {
-          "step": 300,
+          "step": 900,
         }
       }
       label="Start Time"
@@ -32,7 +32,7 @@ exports[`Should correctly render TimeForm 1`] = `
       id="endTime"
       inputProps={
         Object {
-          "step": 300,
+          "step": 900,
         }
       }
       label="End Time"
@@ -40,7 +40,41 @@ exports[`Should correctly render TimeForm 1`] = `
       type="time"
       value="04:00"
     />
+    <br />
+    <br />
+    <label
+      htmlFor="family"
+    >
+      Which family: 
+    </label>
+    <select
+      id="family"
+      name="family"
+      onChange={[Function]}
+    >
+      <option
+        value="-1"
+      >
+        ---
+      </option>
+      <option
+        value="a"
+      >
+        Addams
+      </option>
+      <option
+        value="b"
+      >
+        Bennett
+      </option>
+      <option
+        value="c"
+      >
+        Church
+      </option>
+    </select>
   </form>
+  <br />
   <button
     onClick={[Function]}
   >
@@ -49,5 +83,6 @@ exports[`Should correctly render TimeForm 1`] = `
   <p>
     660
   </p>
+  <p />
 </div>
 `;

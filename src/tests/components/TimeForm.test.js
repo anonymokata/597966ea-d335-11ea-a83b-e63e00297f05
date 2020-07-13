@@ -105,3 +105,12 @@ test('Should prevent end time from being earlier than start time', () => {
   });
   expect(wrapper.state('endTime')).toBe('04:00');
 });
+
+test('Should change family name correctly', () => {
+  wrapper.find('#family').simulate('change', {
+    target: {
+      value: 'b'
+    }
+  });
+  expect(wrapper.state('familyName')).toBe('b');
+});
