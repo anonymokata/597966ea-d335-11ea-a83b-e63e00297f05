@@ -26,70 +26,179 @@ export default class TimeForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      startTime: startOfDay.format('HH:mm'), // default to minimum babysit time
-      endTime: endOfDay.format('HH:mm'), // default to 5 hours later
-      duration: null
+      startOfShift: startOfDay.format('HH:mm'), // default to minimum babysit time
+      endOfShift: endOfDay.format('HH:mm'), // default to maximum babysit time
+      expectedPay: 0,
+      family: {
+        name: null,
+          firstShift: {
+            end: null,
+            pay: null
+          },
+          secondShift: {
+            end: null,
+            pay: null
+          },
+          thirdShift: {
+            end: null,
+            pay: null
+          }
+        }
     }
   }
   handleStartChange = (e) => {
     const startTimeValue = e.target.value;
-    const startTimeMoment = moment(startTimeValue, 'HH:mm');
-    const endTimeMoment = moment(this.state.endTime, 'HH:mm');
-    if(endTimeMoment.hour() < 12) {
-      endTimeMoment.add(24, 'hours');
-    }
-    if(startTimeMoment.isBefore(startOfDay) ||
-    startTimeMoment.isSameOrAfter(endTimeMoment) ||
-    startTimeMoment.isAfter(endOfDay)
+    let startOfShift = moment(startTimeValue, 'HH:mm');
+    startOfShift = this.checkForNextDay(startOfShift);
+
+    let endOfShift = moment(this.state.endOfShift, 'HH:mm');
+    endOfShift = this.checkForNextDay(endOfShift);
+
+    if(startOfShift.isBefore(startOfDay) ||
+    startOfShift.isSameOrAfter(endOfShift) ||
+    startOfShift.isAfter(endOfDay)
     )
     {
       // do nothing
+      console.log('test 1');
     } else {
       this.setState({
-        startTime: startTimeMoment.format('HH:mm')
+        startOfShift: startOfShift.format('HH:mm')
       });
     }
   }
   handleEndChange = (e) => {
     const endTimeValue = e.target.value;
-    let endTimeMoment = moment(endTimeValue, 'HH:mm');
-    endTimeMoment = this.checkForNextDay(endTimeMoment);
-    const startTimeMoment = moment(this.state.startTime, 'HH:mm');
+    let endOfShift = moment(endTimeValue, 'HH:mm');
+    endOfShift = this.checkForNextDay(endOfShift);
+    const startOfShift = moment(this.state.startOfShift, 'HH:mm');
     
-    if (endTimeMoment.isBefore(startOfDay) ||
-    endTimeMoment.isSameOrBefore(startTimeMoment) ||
-    endTimeMoment.isAfter(endOfDay)
+    if (endOfShift.isBefore(startOfDay) ||
+    endOfShift.isSameOrBefore(startOfShift) ||
+    endOfShift.isAfter(endOfDay)
     ) {
       // do nothing
     } else {
       this.setState({
-        endTime: endTimeMoment.format('HH:mm')
+        endOfShift: endOfShift.format('HH:mm')
       });
     }
   }
   
   handleFamilyChange = (e) => {
-    const familyName = e.target.value;
-    if(familyName != -1) {
+    const selectedFamily = e.target.value;
+    let family = {
+      name: null,
+      firstShift: {
+        end: null,
+        pay: null
+      },
+      secondShift: {
+        end: null,
+        pay: null
+      },
+      thirdShift: {
+        end: null,
+        pay: null
+      }
+    }
+    if(selectedFamily === 'a') {
+      family.name = 'a';
+      family.firstShift.end = 23;
+      family.firstShift.pay = 15;
+      family.secondShift.end = 4;
+      family.secondShift.pay = 20;
+      family.thirdShift = null;
+    } else if(selectedFamily === 'b') {
+      family.name = 'b';
+      family.firstShift.end = 22;
+      family.firstShift.pay = 12;
+      family.secondShift.end = 24;
+      family.secondShift.pay = 8;
+      family.thirdShift.end = 4;
+      family.thirdShift.pay = 16;
+    } else if (selectedFamily === 'c') {
+      family.name = 'c'
+      family.firstShift.end = 21;
+      family.firstShift.pay = 21;
+      family.secondShift.end = 4;
+      family.secondShift.pay = 15;
+      family.thirdShift = null;
+    }
+    if(selectedFamily != -1) {
       this.setState({
-        familyName
+        family
       });
     }
   }
 
-  calculateDuration = () => {
-    const startTimeMoment = moment(this.state.startTime, 'HH:mm');
-    let endTimeMoment = moment(this.state.endTime, 'HH:mm');
-    endTimeMoment = this.checkForNextDay(endTimeMoment);
-    const duration = moment.duration(endTimeMoment.diff(startTimeMoment)).asMinutes();
+  // Meat and potatoes of kata
+  calculatePay = () => {
+    let startOfShift = moment(this.state.startOfShift, 'HH:mm');
+    startOfShift = this.checkForNextDay(startOfShift);
+
+    let endOfShift = moment(this.state.endOfShift, 'HH:mm');
+    endOfShift = this.checkForNextDay(endOfShift);
+
+    let firstShiftEnd = moment(this.state.family.firstShift.end, 'HH:mm');
+    firstShiftEnd = this.checkForNextDay(firstShiftEnd);
+
+    let secondShiftEnd = moment(this.state.family.secondShift.end, 'HH:mm');
+    secondShiftEnd = this.checkForNextDay(secondShiftEnd);
+
+    let thirdShiftEnd = null;
+    if(this.state.family.thirdShift) {
+      thirdShiftEnd = moment(this.state.family.thirdShift.end, 'HH:mm');
+      thirdShiftEnd = this.checkForNextDay(thirdShiftEnd);
+    }
+
+    if(endOfShift.isSameOrBefore(firstShiftEnd)) {
+      firstShiftEnd = endOfShift;
+    }
+
+    if(endOfShift.isSameOrBefore(secondShiftEnd)) {
+      secondShiftEnd = endOfShift;
+    }
+
+    if(thirdShiftEnd && endOfShift.isSameOrBefore(thirdShiftEnd)) {
+      thirdShiftEnd = endOfShift;
+    }
+
+    if(startOfShift.isSameOrAfter(firstShiftEnd)) {
+      firstShiftEnd = startOfShift;
+    }
+
+    if(startOfShift.isSameOrAfter(secondShiftEnd)) {
+      secondShiftEnd = startOfShift;
+    }
+
+    let firstShiftDuration = Math.ceil(moment.duration(firstShiftEnd.diff(startOfShift)).asHours());
+    let secondShiftDuration = Math.ceil(moment.duration(secondShiftEnd.diff(firstShiftEnd)).asHours());
+    let thirdShiftDuration = 0;
+    if(thirdShiftEnd) {
+      thirdShiftDuration = Math.ceil(moment.duration(thirdShiftEnd.diff(secondShiftEnd)).asHours());
+    }
+
+    
+    console.log('duration 1', firstShiftDuration);
+    console.log('duration 2', secondShiftDuration);
+    console.log('duration 3', thirdShiftDuration);
+
+    const firstShiftPay = this.state.family.firstShift.pay;
+    const secondShiftPay = this.state.family.secondShift.pay;
+    let thirdShiftPay = 0;
+    if(this.state.family.thirdShift) {
+      thirdShiftPay = this.state.family.thirdShift.pay;
+    }
     this.setState({
-      duration
+      expectedPay: 
+        (firstShiftPay * firstShiftDuration) + 
+        (secondShiftPay * secondShiftDuration) + 
+        (thirdShiftPay * thirdShiftDuration)
     })
   }
-  componentWillMount = () => {
-    this.calculateDuration();
-  }
   
+  // Helper function to confirm that AM/post midnight shifts are calculated on day + 1.
   checkForNextDay = (argMoment) => {
     if (argMoment.hour() < 12) {
       return argMoment.day(startOfDay.day()).add(1, 'day');
@@ -113,7 +222,7 @@ export default class TimeForm extends React.Component {
               step: 300, // 5 min
             }}
             onChange={this.handleStartChange}
-            value={this.state.startTime}
+            value={this.state.startOfShift}
             inputProps = {
               {
                 step: 900, // 5 min
@@ -132,7 +241,7 @@ export default class TimeForm extends React.Component {
               step: 900, // 5 min
             }}
             onChange={this.handleEndChange}
-            value={this.state.endTime}
+            value={this.state.endOfShift}
           />
           <br />
           <br />
@@ -151,18 +260,21 @@ export default class TimeForm extends React.Component {
         </form>
         <br/>
         <button
-          onClick={this.calculateDuration}
-          disabled={!this.state.familyName}
+          onClick={this.calculatePay}
+          disabled={!this.state.family.name}
         >
-          Update time:
+          Calculate pay:
         </button>
-        <p>{this.state.duration}</p>
-        {this.state.familyName && (<div>
-            Family Time Cutoffs for family {this.state.familyName}
+        <p>${this.state.expectedPay}</p>
+        {this.state.family.name && (<div>
+            Family Time Cutoffs for family {this.state.family.name}
             <ul>
-              {this.state.familyName == 'a' && (<li>Pays $15 per hour before 11pm, and $20 per hour the rest of the night</li>)}
-              {this.state.familyName == 'b' && (<li>Pays $12 per hour before 10pm, $8 between 10 and 12, and $16 the rest of the night</li>)}
-              {this.state.familyName == 'c' && (<li>Pays $21 per hour before 9pm, then $15 the rest of the night</li>)}
+              <li>Pays
+                ${this.state.family.firstShift.pay} before {this.state.family.firstShift.end}pm and 
+                ${this.state.family.secondShift.pay} before {this.state.family.secondShift.end} {this.state.family.thirdShift && (<span>and 
+                ${this.state.family.thirdShift.pay} before {this.state.family.thirdShift.end}</span>)
+              }
+              </li>
             </ul>
         </div>)}
 
