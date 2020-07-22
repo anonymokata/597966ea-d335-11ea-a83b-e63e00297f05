@@ -22,6 +22,31 @@ const startOfDay = moment({
 
 const endOfDay = moment(startOfDay).add(11, 'hours');
 
+const perMinute = (perHour) => {
+  return perHour / 60;
+};
+
+// const roundToNearestHour = (minutes) => {
+//   return Math.ceil(minutes / 60) * 60;
+// };
+
+const roundToFullHour = (firstShift, secondShift, thirdShift) => {
+  let times = [firstShift, secondShift, thirdShift];
+  let closestTime = 0;
+  
+  if((secondShift % 60) > times[closestTime] % 60) {
+    closestTime = 1;
+  }
+  if((thirdShift % 60) > times[closestTime % 60]) {
+    closestTime = 2;
+  }
+
+  if((times[closestTime] % 60 !== 0) && (firstShift + secondShift + thirdShift) % 60 !== 0) {
+    times[closestTime] = (60 - ((firstShift + secondShift + thirdShift) % 60)) + times[closestTime];
+  }
+  return times;
+};
+
 export default class TimeForm extends React.Component {
   constructor(props) {
     super(props);
@@ -172,17 +197,19 @@ export default class TimeForm extends React.Component {
       secondShiftEnd = startOfShift;
     }
 
-    let firstShiftDuration = Math.ceil(moment.duration(firstShiftEnd.diff(startOfShift)).asHours());
-    let secondShiftDuration = Math.ceil(moment.duration(secondShiftEnd.diff(firstShiftEnd)).asHours());
+    let firstShiftDuration = Math.ceil(moment.duration(firstShiftEnd.diff(startOfShift)).asMinutes());
+    let secondShiftDuration = Math.ceil(moment.duration(secondShiftEnd.diff(firstShiftEnd)).asMinutes());
     let thirdShiftDuration = 0;
     if(thirdShiftEnd) {
-      thirdShiftDuration = Math.ceil(moment.duration(thirdShiftEnd.diff(secondShiftEnd)).asHours());
+      thirdShiftDuration = Math.ceil(moment.duration(thirdShiftEnd.diff(secondShiftEnd)).asMinutes());
     }
 
+    const noPartialHours = roundToFullHour(firstShiftDuration, secondShiftDuration, thirdShiftDuration);
+    console.log(noPartialHours);
     
-    console.log('duration 1', firstShiftDuration);
-    console.log('duration 2', secondShiftDuration);
-    console.log('duration 3', thirdShiftDuration);
+    // console.log('duration 1', firstShiftDuration);
+    // console.log('duration 2', secondShiftDuration);
+    // console.log('duration 3', thirdShiftDuration);
 
     const firstShiftPay = this.state.family.firstShift.pay;
     const secondShiftPay = this.state.family.secondShift.pay;
@@ -192,9 +219,9 @@ export default class TimeForm extends React.Component {
     }
     this.setState({
       expectedPay: 
-        (firstShiftPay * firstShiftDuration) + 
-        (secondShiftPay * secondShiftDuration) + 
-        (thirdShiftPay * thirdShiftDuration)
+        ((perMinute(firstShiftPay) * noPartialHours[0]) + 
+        (perMinute(secondShiftPay) * noPartialHours[1]) + 
+        (perMinute(thirdShiftPay) * noPartialHours[2])).toFixed(2)
     })
   }
   
