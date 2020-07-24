@@ -26,10 +26,6 @@ const perMinute = (perHour) => {
   return perHour / 60;
 };
 
-// const roundToNearestHour = (minutes) => {
-//   return Math.ceil(minutes / 60) * 60;
-// };
-
 const roundToFullHour = (firstShift, secondShift, thirdShift) => {
   let times = [firstShift, secondShift, thirdShift];
   let closestTime = 0;
@@ -85,7 +81,6 @@ export default class TimeForm extends React.Component {
     )
     {
       // do nothing
-      console.log('test 1');
     } else {
       this.setState({
         startOfShift: startOfShift.format('HH:mm')
@@ -205,7 +200,7 @@ export default class TimeForm extends React.Component {
     }
 
     const noPartialHours = roundToFullHour(firstShiftDuration, secondShiftDuration, thirdShiftDuration);
-    console.log(noPartialHours);
+    // console.log(noPartialHours);
     
     // console.log('duration 1', firstShiftDuration);
     // console.log('duration 2', secondShiftDuration);
@@ -289,6 +284,7 @@ export default class TimeForm extends React.Component {
         <button
           onClick={this.calculatePay}
           disabled={!this.state.family.name}
+          id="buttonCalc"
         >
           Calculate pay:
         </button>

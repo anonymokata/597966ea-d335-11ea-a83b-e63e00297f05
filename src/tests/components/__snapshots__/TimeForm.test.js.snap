@@ -77,12 +77,14 @@ exports[`Should correctly render TimeForm 1`] = `
   <br />
   <button
     disabled={true}
+    id="buttonCalc"
     onClick={[Function]}
   >
-    Update time:
+    Calculate pay:
   </button>
   <p>
-    660
+    $
+    0
   </p>
 </div>
 `;
