@@ -33,11 +33,11 @@ const roundToFullHour = (firstShift, secondShift, thirdShift) => {
   if((secondShift % 60) > times[closestTime] % 60) {
     closestTime = 1;
   }
-  if((thirdShift % 60) > times[closestTime % 60]) {
+  if((thirdShift % 60) > times[closestTime] % 60) {
     closestTime = 2;
   }
 
-  if((times[closestTime] % 60 !== 0) && (firstShift + secondShift + thirdShift) % 60 !== 0) {
+  if((times[closestTime] % 60 !== 0) && ((firstShift + secondShift + thirdShift) % 60 !== 0)) {
     times[closestTime] = (60 - ((firstShift + secondShift + thirdShift) % 60)) + times[closestTime];
   }
   return times;
@@ -75,18 +75,16 @@ export default class TimeForm extends React.Component {
     let endOfShift = moment(this.state.endOfShift, 'HH:mm');
     endOfShift = this.checkForNextDay(endOfShift);
 
-    if(startOfShift.isBefore(startOfDay) ||
+    const hasTimeFormatErrors = startOfShift.isBefore(startOfDay) ||
     startOfShift.isSameOrAfter(endOfShift) ||
-    startOfShift.isAfter(endOfDay)
-    )
-    {
-      // do nothing
-    } else {
+    startOfShift.isAfter(endOfDay);
+    if(!hasTimeFormatErrors){
       this.setState({
         startOfShift: startOfShift.format('HH:mm')
       });
     }
   }
+
   handleEndChange = (e) => {
     const endTimeValue = e.target.value;
     let endOfShift = moment(endTimeValue, 'HH:mm');
@@ -152,7 +150,6 @@ export default class TimeForm extends React.Component {
     }
   }
 
-  // Meat and potatoes of kata
   calculatePay = () => {
     let startOfShift = moment(this.state.startOfShift, 'HH:mm');
     startOfShift = this.checkForNextDay(startOfShift);
@@ -200,12 +197,6 @@ export default class TimeForm extends React.Component {
     }
 
     const noPartialHours = roundToFullHour(firstShiftDuration, secondShiftDuration, thirdShiftDuration);
-    // console.log(noPartialHours);
-    
-    // console.log('duration 1', firstShiftDuration);
-    // console.log('duration 2', secondShiftDuration);
-    // console.log('duration 3', thirdShiftDuration);
-
     const firstShiftPay = this.state.family.firstShift.pay;
     const secondShiftPay = this.state.family.secondShift.pay;
     let thirdShiftPay = 0;
@@ -241,15 +232,10 @@ export default class TimeForm extends React.Component {
               shrink: true,
             }}
             inputProps={{
-              step: 300, // 5 min
+              step: 300
             }}
             onChange={this.handleStartChange}
             value={this.state.startOfShift}
-            inputProps = {
-              {
-                step: 900, // 5 min
-              }
-            }
           />
           <br />
           <TextField
@@ -260,7 +246,7 @@ export default class TimeForm extends React.Component {
               shrink: true,
             }}
             inputProps={{
-              step: 900, // 5 min
+              step: 300
             }}
             onChange={this.handleEndChange}
             value={this.state.endOfShift}
