@@ -43,6 +43,53 @@ const roundToFullHour = (firstShift, secondShift, thirdShift) => {
   return times;
 };
 
+const FAMILIES = [
+  {
+    name: 'Addams',
+    shortened: 'a',
+    firstShift: {
+      end: 23,
+      pay: 15
+    },
+    secondShift: {
+      end: 4,
+      pay: 20
+    }
+  },
+  {
+    name: 'Bennett',
+    shortened: 'b',
+    firstShift: {
+      end: 22,
+      pay: 12
+    },
+    secondShift: {
+      end: 0,
+      pay: 8
+    },
+    thirdShift: {
+      end: 4,
+      pay: 16
+    }
+  },
+  {
+    name: 'Church',
+    shortened: 'c',
+    firstShift: {
+      end: 21,
+      pay: 21,
+    },
+    secondShift: {
+      end: 4,
+      pay: 15
+    }
+  }
+]
+
+const getFamilyName = () => {
+  return FAMILIES.filter(family => family.shortened == this.state.family.shortened).name;
+}
+
 export default class TimeForm extends React.Component {
   constructor(props) {
     super(props);
@@ -67,6 +114,7 @@ export default class TimeForm extends React.Component {
         }
     }
   }
+
   handleStartChange = (e) => {
     const startTimeValue = e.target.value;
     let startOfShift = moment(startTimeValue, 'HH:mm');
@@ -105,44 +153,7 @@ export default class TimeForm extends React.Component {
   
   handleFamilyChange = (e) => {
     const selectedFamily = e.target.value;
-    let family = {
-      name: null,
-      firstShift: {
-        end: null,
-        pay: null
-      },
-      secondShift: {
-        end: null,
-        pay: null
-      },
-      thirdShift: {
-        end: null,
-        pay: null
-      }
-    }
-    if(selectedFamily === 'a') {
-      family.name = 'a';
-      family.firstShift.end = 23;
-      family.firstShift.pay = 15;
-      family.secondShift.end = 4;
-      family.secondShift.pay = 20;
-      family.thirdShift = null;
-    } else if(selectedFamily === 'b') {
-      family.name = 'b';
-      family.firstShift.end = 22;
-      family.firstShift.pay = 12;
-      family.secondShift.end = 24;
-      family.secondShift.pay = 8;
-      family.thirdShift.end = 4;
-      family.thirdShift.pay = 16;
-    } else if (selectedFamily === 'c') {
-      family.name = 'c'
-      family.firstShift.end = 21;
-      family.firstShift.pay = 21;
-      family.secondShift.end = 4;
-      family.secondShift.pay = 15;
-      family.thirdShift = null;
-    }
+    const family = FAMILIES.filter(family => family.shortened === selectedFamily)[0];
     if(selectedFamily != -1) {
       this.setState({
         family
@@ -261,9 +272,11 @@ export default class TimeForm extends React.Component {
             id="family"
           >
             <option value="-1">---</option>
-            <option value="a">Addams</option>
-            <option value="b">Bennett</option>
-            <option value="c">Church</option>
+            {
+              FAMILIES.map(family => (
+                <option value={family.shortened}>{family.name}</option>
+              ))
+            }
           </select>
         </form>
         <br/>
@@ -276,7 +289,7 @@ export default class TimeForm extends React.Component {
         </button>
         <p>${this.state.expectedPay}</p>
         {this.state.family.name && (<div>
-            Family Time Cutoffs for family {this.state.family.name}
+            Family Time Cutoffs for family {this.getFamilyName}
             <ul>
               <li>Pays
                 ${this.state.family.firstShift.pay} before {this.state.family.firstShift.end}pm and 
