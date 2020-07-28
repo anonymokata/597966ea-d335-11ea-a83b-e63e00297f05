@@ -124,8 +124,8 @@ export default class TimeForm extends React.Component {
     endOfShift = this.checkForNextDay(endOfShift);
 
     const hasTimeFormatErrors = startOfShift.isBefore(startOfDay) ||
-    startOfShift.isSameOrAfter(endOfShift) ||
-    startOfShift.isAfter(endOfDay);
+                                startOfShift.isSameOrAfter(endOfShift) ||
+                                startOfShift.isAfter(endOfDay);
     if(!hasTimeFormatErrors){
       this.setState({
         startOfShift: startOfShift.format('HH:mm')
@@ -139,12 +139,11 @@ export default class TimeForm extends React.Component {
     endOfShift = this.checkForNextDay(endOfShift);
     const startOfShift = moment(this.state.startOfShift, 'HH:mm');
     
-    if (endOfShift.isBefore(startOfDay) ||
-    endOfShift.isSameOrBefore(startOfShift) ||
-    endOfShift.isAfter(endOfDay)
-    ) {
-      // do nothing
-    } else {
+    const hasTimeFormatErrors = endOfShift.isBefore(startOfDay) ||
+                                endOfShift.isSameOrBefore(startOfShift) ||
+                                endOfShift.isAfter(endOfDay)
+    
+    if (!hasTimeFormatErrors)) {
       this.setState({
         endOfShift: endOfShift.format('HH:mm')
       });
