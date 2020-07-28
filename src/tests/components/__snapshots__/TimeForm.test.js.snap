@@ -14,7 +14,7 @@ exports[`Should correctly render TimeForm 1`] = `
       id="startTime"
       inputProps={
         Object {
-          "step": 900,
+          "step": 300,
         }
       }
       label="Start Time"
@@ -32,7 +32,7 @@ exports[`Should correctly render TimeForm 1`] = `
       id="endTime"
       inputProps={
         Object {
-          "step": 900,
+          "step": 300,
         }
       }
       label="End Time"
@@ -58,16 +58,19 @@ exports[`Should correctly render TimeForm 1`] = `
         ---
       </option>
       <option
+        key="a"
         value="a"
       >
         Addams
       </option>
       <option
+        key="b"
         value="b"
       >
         Bennett
       </option>
       <option
+        key="c"
         value="c"
       >
         Church

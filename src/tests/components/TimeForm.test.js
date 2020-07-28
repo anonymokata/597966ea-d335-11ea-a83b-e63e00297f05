@@ -108,7 +108,7 @@ test('Should change family name correctly', () => {
       value: 'b'
     }
   });
-  expect(wrapper.state('family')['name']).toBe('b');
+  expect(wrapper.state('family')['shortened']).toBe('b');
 });
 
 test('Should prevent family name returning to default', () => {
@@ -122,7 +122,7 @@ test('Should prevent family name returning to default', () => {
       value: '-1'
     }
   });
-  expect(wrapper.state('family')['name']).toBe('b');
+  expect(wrapper.state('family')['shortened']).toBe('b');
 });
 
 
@@ -139,10 +139,9 @@ test('Should call calculatePay on click', () => {
 
 test('Should prevent calculatePay from being called without selected family', () => {
   const calculateSpy = jest.spyOn(wrapper.instance(), 'calculatePay');
-  // do not change family, disabling button
   wrapper.find("#buttonCalc").simulate('click');
   expect(calculateSpy).not.toHaveBeenCalled();
-  expect(wrapper.state('expectedPay')).toBe("NaN");
+  expect(wrapper.state('expectedPay')).toBe(0);
 });
 
 test('Should calculate full shift 5pm to 4am for family A at $190', () => {
@@ -177,18 +176,21 @@ test('Should calculate full shift 5pm to 4am for family B at $189', () => {
 
 test('Should calculate family A two hours first shift at $30', () => {
   wrapper.setState({
-    startOfShift: 21,
     family: {
-      name: 'a',
-      firstShift: {
-        end: 23,
-        pay: 15
-      },
-      secondShift: {
-        end: 23,
-        pay: 20
-      }
+      name: 'Addams',
+      shortened: 'a',
+      shifts: [
+        {
+          end: 23,
+          pay: 15
+        },
+        {
+          end: 4,
+          pay: 20
+        }
+      ]
     },
+    endOfShift: 19
   });
   wrapper.find("#buttonCalc").simulate("click");
   expect(wrapper.state('expectedPay')).toEqual('30.00');
