@@ -143,7 +143,7 @@ export default class TimeForm extends React.Component {
                                 endOfShift.isSameOrBefore(startOfShift) ||
                                 endOfShift.isAfter(endOfDay)
     
-    if (!hasTimeFormatErrors)) {
+    if (!hasTimeFormatErrors) {
       this.setState({
         endOfShift: endOfShift.format('HH:mm')
       });

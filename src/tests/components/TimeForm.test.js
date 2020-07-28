@@ -196,6 +196,37 @@ test('Should calculate family A two hours first shift at $30', () => {
   expect(wrapper.state('expectedPay')).toEqual('30.00');
 });
 
+test('Should calculate new family for four hours over two shift changes correctly to $64', () => {
+  wrapper.setState({
+    family: {
+      name: 'Denver',
+      shortened: 'd',
+      shifts: [
+        {
+          end: 20,
+          pay: 19
+        },
+        {
+          end: 22,
+          pay: 14.50
+        },
+        {
+          end: '2:30',
+          pay: 13
+        },
+        {
+          end: 4,
+          pay: 11.25
+        }
+      ]
+    },
+    startOfShift: '18:30',
+    endOfShift: '22:30'
+  });
+  wrapper.find("#buttonCalc").simulate("click");
+  expect(wrapper.state('expectedPay')).toEqual('64.00');
+});
+
 test('Should calculate family B 4.5hours all three shifts pays with 9:30pm start at $60, also bringing 9:30pm to a full hour', () => {
   wrapper.find('#family').simulate('change', {
     target: {
