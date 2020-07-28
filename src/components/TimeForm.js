@@ -100,10 +100,6 @@ const FAMILIES = [
   }
 ]
 
-const getFamilyName = () => {
-  return FAMILIES.filter(family => family.shortened == this.state.family.shortened).name;
-}
-
 export default class TimeForm extends React.Component {
   constructor(props) {
     super(props);
@@ -257,7 +253,6 @@ export default class TimeForm extends React.Component {
           <label htmlFor="family">Which family: </label>
           <select
             name="family"
-            value={this.state.familyName}
             onChange={this.handleFamilyChange}
             id="family"
           >
@@ -277,14 +272,13 @@ export default class TimeForm extends React.Component {
         >
           Calculate pay:
         </button>
-        <p>${this.state.expectedPay}</p>
+        <p><b>Expected pay: </b>${this.state.expectedPay}</p>
         {this.state.family && (<div>
-            Family Time Cutoffs for family {this.state.family.name}
-            <ul>
-              <li>Pays {this.state.family.shifts.map((shift,index) => (
+            Pay schedule for {this.state.family.name} family:
+            <p>Pays {this.state.family.shifts.map((shift,index) => (
                 <span key={index}>${shift.pay} until {this.formatTime(shift.end)}{index !== this.state.family.shifts.length - 1 && <span>, </span>}</span>
-              ))}</li>
-            </ul>
+              ))}
+            </p>
         </div>)}
 
       </div>
