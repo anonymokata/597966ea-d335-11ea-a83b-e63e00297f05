@@ -36,4 +36,7 @@ node client.js [options]
 
 ## Tests
 
-TODO
+Tests can be found in ./test.js and can be run with
+```
+npm run test
+```
