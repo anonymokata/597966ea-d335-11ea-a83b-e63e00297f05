@@ -67,7 +67,7 @@ const calculatePay = (argFamily, argStart, argEnd) => {
   let endOfShift = moment(end, 'HH:mm');
   endOfShift = checkForNextDay(end);
 
-  if (startOfShift.isBefore(startOfDay) || endOfShift.isAfter(endOfDay)) return null; // check time bounadries
+  if (startOfShift.isBefore(startOfDay) || endOfShift.isAfter(endOfDay) || endOfShift.isBefore(startOfShift)) return null; // check time bounadries
 
   let familyShifts = new Array(family.shifts.length);
   for(let i = 0; i < family.shifts.length; i++){
@@ -103,7 +103,6 @@ const calculatePay = (argFamily, argStart, argEnd) => {
   }
   expectedPay = Number.parseFloat(expectedPay).toFixed(2); 
   
-  console.log('You are expected to make $', expectedPay);
   return expectedPay;
 }
 
@@ -129,7 +128,8 @@ const argv = yargs
   .argv;
 
 if(argv.family && argv.start && argv.end) {
-  calculatePay(argv.family, argv.start, argv.end);
+  const pay = calculatePay(argv.family, argv.start, argv.end);
+  console.log('Expected pay: $', pay);
 } else {
   console.log('For help getting started, type node client.js -h');
 }
