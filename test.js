@@ -39,4 +39,14 @@ describe('client.js', function() {
       assert.equal(190.00, calculatePay('a', '5:00pm', '4:00am'));
     });
   });
+  describe('calculatePay()', function() {
+    it('Should return null for shift starting before 5:00pm', function() {
+      assert.equal(null, calculatePay('a', '4:00pm', '4:00am'));
+    });
+  });
+  describe('calculatePay()', function() {
+    it('Should return null for shift ending after 4:00am', function() {
+      assert.equal(null, calculatePay('a', '5:00pm', '5:00am'));
+    });
+  });
 });

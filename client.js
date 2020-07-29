@@ -1,6 +1,6 @@
 const yargs = require('yargs');
 const moment = require('moment');
-const { FAMILIES, startOfDay } = require('./config');
+const { FAMILIES, startOfDay, endOfDay } = require('./config');
 
 const checkForNextDay = (argMoment) => {
   if (argMoment.hour() < 12) {
@@ -51,7 +51,7 @@ const parseTime = (arg) => {
   if(sign && sign.toLowerCase() == 'pm') {
     hour += 12;
   }
-  return moment().set('hour', hour).set('minute', minute);
+  return moment().set('hour', hour).set('minute', minute).millisecond(0).second(0);
 }
 
 const calculatePay = (argFamily, argStart, argEnd) => {
@@ -60,13 +60,14 @@ const calculatePay = (argFamily, argStart, argEnd) => {
   const start = parseTime(argStart);
   const end = parseTime(argEnd);
 
-  if(!family || !start || !end) return null;
+  if(!family || !start || !end) return null; // confirm valid arguments
 
   let startOfShift = moment(start, 'HH:mm');
   startOfShift = checkForNextDay(start);
-
   let endOfShift = moment(end, 'HH:mm');
   endOfShift = checkForNextDay(end);
+
+  if (startOfShift.isBefore(startOfDay) || endOfShift.isAfter(endOfDay)) return null; // check time bounadries
 
   let familyShifts = new Array(family.shifts.length);
   for(let i = 0; i < family.shifts.length; i++){
@@ -96,7 +97,9 @@ const calculatePay = (argFamily, argStart, argEnd) => {
   
   let expectedPay = 0;
   for (let i = 0; i < durations.length; i++) {
-    expectedPay += (perMinute(family.shifts[i].pay) * noPartialHourTotal[i]); 
+    let convertedPay = perMinute(family.shifts[i].pay);
+    if(convertedPay == null) { return null }
+    expectedPay += (convertedPay * noPartialHourTotal[i]); 
   }
   expectedPay = Number.parseFloat(expectedPay).toFixed(2); 
   

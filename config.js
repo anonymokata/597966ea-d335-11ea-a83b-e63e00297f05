@@ -51,7 +51,7 @@ const FAMILIES = [
 
 const startOfDay = moment({
   'hour': 17
-});
+}).millisecond(0).second(0);
 
 const endOfDay = moment(startOfDay).add(11, 'hours');
 
