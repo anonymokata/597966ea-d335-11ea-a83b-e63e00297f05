@@ -2,16 +2,25 @@ const yargs = require('yargs');
 const moment = require('moment');
 const { FAMILIES, startOfDay, endOfDay } = require('./config');
 
-
+/* 
+  @desc: Converts per hour pay into per minute pay
+  @args: perHour (float))
+  @return: result (float)
+*/
 const perMinute = (perHour) => {
   let result = perHour / 60;
-  if(!Number.isNaN(result)) { return result; }
-  else { return null }
+  if(Number.isNaN(result)) return null; 
+  return result;
 };
 
-const parseTime = (arg) => {
+/*
+  @desc: confirms arg is a time
+  @args: time (str), either signed or military
+  @return: time (moment)
+*/
+const parseTime = (time) => {
   const pattern = /^(\d{1,2}):(\d{2})(am|AM|pm|PM)?$/gm;
-  const timeMatch = pattern.exec(arg);
+  const timeMatch = pattern.exec(time);
   if(timeMatch == null) return null;
 
   let hour = parseInt(timeMatch[1]);
@@ -20,9 +29,15 @@ const parseTime = (arg) => {
   if(sign && sign.toLowerCase() == 'pm') {
     hour += 12;
   }
-  return moment().set('hour', hour).set('minute', minute).millisecond(0).second(0);
+  time = moment().set('hour', hour).set('minute', minute).millisecond(0).second(0);
+  return time;
 }
 
+/*
+  @desc: helps maintain hours/days in moment() times. If an hour is < 12 military, then it is the next day as it is early morning.
+  @arg: argMoment (moment)
+  @returns: argMoment (moment)
+*/
 const checkForNextDay = (argMoment) => {
   if (argMoment.hour() < 12) {
     return argMoment.day(startOfDay.day()).add(1, 'day');
@@ -31,18 +46,13 @@ const checkForNextDay = (argMoment) => {
   }
 }
 
-const roundToNearestHour = (durationsArray) => {
-  const totalDuration = durationsArray.reduce((total, duration) => total + duration, 0);
-  const closestIndex = findClosestShiftToFullHour(durationsArray);
-  if(closestIndex) {
-    durationsArray[closestIndex] = (60 - (totalDuration % 60) + durationsArray[closestIndex]);
-  }
-
-  return durationsArray;
-};
-
-function findClosestShiftToFullHour(argArray){
-  const arrCopy = [...argArray];
+/*
+  @desc: finds index in array of duration that is closest to a full hour
+  @arg: arrDurations (array of durations)
+  @return: closetIndex (int)
+*/
+function findClosestShiftToFullHour(arrDurations){
+  const arrCopy = [...arrDurations];
   const totalDuration = arrCopy.reduce((total, duration) => total + duration, 0);
   if(totalDuration % 60 === 0) return null;
   
@@ -56,28 +66,48 @@ function findClosestShiftToFullHour(argArray){
   return closestIndex;
 }
 
+/*
+  @desc: rounds total duration to nearest full hour based on findClosestShiftToFullHour() index
+  @arg: arrDurations (array of durations)
+  @return: arrDurations (array of durations)
+*/
+const roundToNearestHour = (arrDurations) => {
+  const totalDuration = arrDurations.reduce((total, duration) => total + duration, 0);
+  const closestIndex = findClosestShiftToFullHour(arrDurations);
+  if(closestIndex) {
+    arrDurations[closestIndex] = (60 - (totalDuration % 60) + arrDurations[closestIndex]);
+  }
+  return arrDurations;
+};
 
+
+/*
+  @desc: calculates pay for babysitter based on family, start time, and end time
+  @arg: family (char), start (str), end (str)
+  @return: expectedPay (float)
+*/
 const calculatePay = (argFamily, argStart, argEnd) => {
-  if(!argFamily || !argStart || !argEnd) return null;
+  if(!argFamily || !argStart || !argEnd) return null; // makes sure all arguments are accounted for
+
   const family = FAMILIES.filter(family => family.shortened === argFamily.toLowerCase())[0];
   const start = parseTime(argStart);
   const end = parseTime(argEnd);
-
-  if(!family || !start || !end) return null; // confirm valid arguments
+  if(!family || !start || !end) return null; // confirms validity of arguments
 
   let startOfShift = moment(start, 'HH:mm');
   startOfShift = checkForNextDay(start);
   let endOfShift = moment(end, 'HH:mm');
   endOfShift = checkForNextDay(end);
-
   if (startOfShift.isBefore(startOfDay) || endOfShift.isAfter(endOfDay) || endOfShift.isBefore(startOfShift)) return null; // check time bounadries
 
+  // creates array of shifts based on selected family
   let familyShifts = new Array(family.shifts.length);
   for(let i = 0; i < family.shifts.length; i++){
     familyShifts[i] = moment(family.shifts[i].end, 'HH:mm');
     familyShifts[i] = checkForNextDay(familyShifts[i]);
   };
 
+  // reduces shifts array based on actual start and end times
   for(let i = 0; i < familyShifts.length; i++) {
     if(endOfShift.isSameOrBefore(familyShifts[i])) {
       familyShifts[i] = endOfShift;
@@ -87,6 +117,7 @@ const calculatePay = (argFamily, argStart, argEnd) => {
     }
   };
 
+  // creates array of duration based on reduced shifts array
   let durations = new Array(familyShifts.length);
   for (let i = 0; i < familyShifts.length; i++) {
     if(i === 0) {
@@ -96,19 +127,26 @@ const calculatePay = (argFamily, argStart, argEnd) => {
     }
   }
 
-  const noPartialHourTotal = roundToNearestHour(durations);
+  // checks for partial hours and adjusts array accordingly 
+  durations = roundToNearestHour(durations);
   
+  // calculates pay based off of durations array and perMinute rate of those shifts
   let expectedPay = 0;
   for (let i = 0; i < durations.length; i++) {
     let convertedPay = perMinute(family.shifts[i].pay);
     if(convertedPay == null) { return null }
-    expectedPay += (convertedPay * noPartialHourTotal[i]); 
+    expectedPay += (convertedPay * durations[i]); 
   }
   expectedPay = Number.parseFloat(expectedPay).toFixed(2); 
   
   return expectedPay;
 }
 
+/*
+  @desc: command line use for function
+  @arg: family -f (char), start -s (str), and end -e (str)
+  @return: prints expected pay in terminal
+*/
 const argv = yargs
   .option('family', {
     alias: 'f',
@@ -137,6 +175,7 @@ if(argv.family && argv.start && argv.end) {
   console.log('For help getting started, type node client.js -h');
 }
 
+// exports for testing purposes only
 exports.parseTime = parseTime;
 exports.calculatePay = calculatePay;
 exports.checkForNextDay = checkForNextDay;
