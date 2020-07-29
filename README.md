@@ -1,7 +1,6 @@
 # Babysitter Kata
 
-This kata is designed to implement standard coding practices. It is a test driven project. It largely uses OOP, which a few helper functions. It is based on React to speed up input and output from user
-
+This kata is designed to implement standard coding practices. It is a test driven project. which a few helper functions.
 ## Desired Result
 
 Kata will feature a babysitter, you.  
@@ -24,29 +23,17 @@ $ npm install
 
 ## Available Scripts
 
-There are two main scripts: dev-server and test
-
-### dev-Server
-
+There is no need for an npm based script. To run the script, type
 ```
-$ npm run dev-server  
-```
-Allows user to view their calculator on localhost:8080  
-This is a development server and not "production" ready.
-
-### test
-
-```
-$ npm run test
+node client.js [options]
 ```
 
-Runs the test suite located in src/tests/  
-Can be run to watch tests live and continuously.  
-```
-$ npm run test -- --watch
-```
+### Options
 
-(Must be run with both sets of double dashes)  
-## Additional script
+```--family, -f A/B/C```     Must be A B or C  
+```--start, -s 5:00pm```     Can be either signed time (am/pm) or military  
+```--end, -e 7:00pm```       Can be either signed time (am/pm) or military
 
-```$ npm run build``` and ```$ npm run serve``` allow for a "production" environment
+## Tests
+
+TODO
