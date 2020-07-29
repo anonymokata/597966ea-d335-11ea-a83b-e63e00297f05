@@ -8,8 +8,8 @@ const {
   perMinute, 
   parseTime, 
   checkForNextDay,
-  findClosestShiftToFullHour,
   roundToNearestHour,
+  findClosestShiftToFullHour,
   calculatePay, 
 } = require('./client');
 
@@ -47,6 +47,22 @@ describe('client.js', function() {
       let testMoment = moment().set('hour', 19).set('minute', 0);
       testMoment = checkForNextDay(testMoment);
       assert.equal(testMoment.day(), startOfDay.day());
+    });
+  });
+  describe('roundToTheNearestHour()', function() {
+    it('Should return the array unadjusted', function() {
+      assert.deepEqual([60, 0, 45, 15], roundToNearestHour([60,0,45,15]));
+    });
+  });
+  describe('roundToTheNearestHour()', function() {
+    it('Should return the array with the third spot brought to 45 for the missing time', function() {
+      assert.deepEqual([60, 0, 45, 15], roundToNearestHour([60,0,40,15]));
+    });
+  });
+  
+  describe('roundToTheNearestHour()', function() {
+    it('Should return the array with the second spot brought to 75 for the missing time', function() {
+      assert.deepEqual([30, 75, 0, 15], roundToNearestHour([30,40,0,15]));
     });
   });
   describe('calculatePay()', function() {
