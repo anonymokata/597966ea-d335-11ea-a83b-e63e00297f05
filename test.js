@@ -86,11 +86,6 @@ describe('client.js', function() {
     });
   });
   describe('calculatePay()', function() {
-    it('Should return 190.00 for family A full shift', function() {
-      assert.equal(190.00, calculatePay('a', '5:00pm', '4:00am'));
-    });
-  });
-  describe('calculatePay()', function() {
     it('Should return null for shift starting before 5:00pm', function() {
       assert.equal(null, calculatePay('a', '4:00pm', '4:00am'));
     });
@@ -108,6 +103,26 @@ describe('client.js', function() {
   describe('calculatePay()', function() {
     it('Should return null for shift starting after end time', function() {
       assert.equal(null, calculatePay('a', '1:00am', '11:30pm'));
+    });
+  });
+  describe('calculatePay()', function() {
+    it('Should return 190.00 for family A full shift', function() {
+      assert.equal(190.00, calculatePay('a', '5:00pm', '4:00am'));
+    });
+  });
+  describe('calculatePay()', function() {
+    it('Should return 24.00 for family B for a two hour shift in 1st shift', function() {
+      assert.equal(24.00, calculatePay('b', '5:30pm', '7:30pm'));
+    });
+  });
+  describe('calculatePay()', function() {
+    it('Should return 18.00 for family C for a one hour shift across the shift change', function() {
+      assert.equal(18.00, calculatePay('c', '8:30pm', '21:30'));
+    });
+  });
+  describe('calculatePay()', function() {
+    it('Should return 100.00 for a 5.5hr shift from 7pm to 12:30am for family A', function() {
+      assert.equal(100.00, calculatePay('a', '19:00', '0:30'));
     });
   });
 });
