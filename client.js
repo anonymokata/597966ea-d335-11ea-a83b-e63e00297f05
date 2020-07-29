@@ -2,43 +2,12 @@ const yargs = require('yargs');
 const moment = require('moment');
 const { FAMILIES, startOfDay, endOfDay } = require('./config');
 
-const checkForNextDay = (argMoment) => {
-  if (argMoment.hour() < 12) {
-    return argMoment.day(startOfDay.day()).add(1, 'day');
-  } else {
-    return argMoment.day(startOfDay.day());
-  }
-}
 
 const perMinute = (perHour) => {
   let result = perHour / 60;
   if(!Number.isNaN(result)) { return result; }
   else { return null }
 };
-
-const roundToNearestHour = (durationsArray) => {
-  const totalDuration = durationsArray.reduce((total, duration) => total + duration, 0);
-  if(totalDuration % 60 !== 0) {
-    
-    const closestIndex = closestToFullHour(durationsArray);
-  
-    durationsArray[closestIndex] = (60 - (totalDuration % 60) + durationsArray[closestIndex]);
-  }
-  return durationsArray;
-};
-
-function closestToFullHour(argArray){
-  const arrCopy = [...argArray];
-  let closestIndex = 0;
-  
-  for(let i = 0; i < arrCopy.length; i++) {
-    arrCopy[i] = arrCopy[i] % 60;
-    if(arrCopy[i] >= arrCopy[closestIndex] && arrCopy[i] < 60) {
-      closestIndex = i;
-    }
-  }
-  return closestIndex;
-}
 
 const parseTime = (arg) => {
   const pattern = /^(\d{1,2}):(\d{2})(am|AM|pm|PM)?$/gm;
@@ -53,6 +22,39 @@ const parseTime = (arg) => {
   }
   return moment().set('hour', hour).set('minute', minute).millisecond(0).second(0);
 }
+
+const checkForNextDay = (argMoment) => {
+  if (argMoment.hour() < 12) {
+    return argMoment.day(startOfDay.day()).add(1, 'day');
+  } else {
+    return argMoment.day(startOfDay.day());
+  }
+}
+
+const roundToNearestHour = (durationsArray) => {
+  const totalDuration = durationsArray.reduce((total, duration) => total + duration, 0);
+  if(totalDuration % 60 !== 0) {
+    
+    const closestIndex = findClosestShiftToFullHour(durationsArray);
+  
+    durationsArray[closestIndex] = (60 - (totalDuration % 60) + durationsArray[closestIndex]);
+  }
+  return durationsArray;
+};
+
+function findClosestShiftToFullHour(argArray){
+  const arrCopy = [...argArray];
+  let closestIndex = 0;
+  
+  for(let i = 0; i < arrCopy.length; i++) {
+    arrCopy[i] = arrCopy[i] % 60;
+    if(arrCopy[i] >= arrCopy[closestIndex] && arrCopy[i] < 60) {
+      closestIndex = i;
+    }
+  }
+  return closestIndex;
+}
+
 
 const calculatePay = (argFamily, argStart, argEnd) => {
   if(!argFamily || !argStart || !argEnd) return null;
@@ -138,3 +140,5 @@ exports.parseTime = parseTime;
 exports.calculatePay = calculatePay;
 exports.checkForNextDay = checkForNextDay;
 exports.perMinute = perMinute;
+exports.roundToNearestHour = roundToNearestHour;
+exports.findClosestShiftToFullHour = findClosestShiftToFullHour;

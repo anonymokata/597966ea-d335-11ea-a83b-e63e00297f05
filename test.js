@@ -1,6 +1,17 @@
 const assert = require('assert');
 const moment = require('moment');
-const { calculatePay, FAMILIES, startOfDay, parseTime, perMinute, checkForNextDay } = require('./client');
+const {
+  FAMILIES, 
+  startOfDay, 
+} = require('./config');
+const { 
+  perMinute, 
+  parseTime, 
+  checkForNextDay,
+  findClosestShiftToFullHour,
+  roundToNearestHour,
+  calculatePay, 
+} = require('./client');
 
 describe('client.js', function() {
   describe('perMinute()', function() {
@@ -22,6 +33,20 @@ describe('client.js', function() {
   describe('parseTime()', function() {
     it('Should fail regex test, returning null', function() {
       assert.equal(null, parseTime("5:00pma"));
+    });
+  });
+  describe('checkForNextDay()', function() {
+    it('Should add one to the moment() day if hour is less than 12 miltary time, adds one to moment() day', function() {
+      let testMoment = moment().set('hour', 3).set('minute', 0);
+      testMoment = checkForNextDay(testMoment);
+      assert.equal(testMoment.day(), startOfDay.add(1, 'day').day());
+    });
+  });
+  describe('checkForNextDay()', function() {
+    it('Should not add one to the moment() day if hour is greater than 12 miltary time', function() {
+      let testMoment = moment().set('hour', 19).set('minute', 0);
+      testMoment = checkForNextDay(testMoment);
+      assert.equal(testMoment.day(), startOfDay.day());
     });
   });
   describe('calculatePay()', function() {
