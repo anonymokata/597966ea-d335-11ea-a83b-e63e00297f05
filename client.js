@@ -1,63 +1,8 @@
 const yargs = require('yargs');
 const moment = require('moment');
+const { FAMILIES, startOfDay } = require('./config');
 
-const FAMILIES = [
-  {
-    name: 'Addams',
-    shortened: 'a',
-    shifts: [
-      {
-        end: 23,
-        pay:15
-      },
-      {
-        end: 4,
-        pay: 20
-      }
-    ]
-  },
-  {
-    name: 'Bennett',
-    shortened: 'b',
-    shifts: [
-      {
-        end: 22,
-        pay: 12
-      },
-      {
-        end: 0,
-        pay: 8
-      },
-      {
-        end: 4,
-        pay: 16
-      }
-    ]
-  },
-  {
-    name: 'Church',
-    shortened: 'c',
-    shifts: [
-      {
-        end: 21,
-        pay: 21
-      },
-      {
-        end: 4,
-        pay: 15
-      }
-    ]
-  }
-]
-
-const startOfDay = moment({
-  'hour': 17
-});
-
-const endOfDay = moment(startOfDay).add(11, 'hours');
-
-
-checkForNextDay = (argMoment) => {
+const checkForNextDay = (argMoment) => {
   if (argMoment.hour() < 12) {
     return argMoment.day(startOfDay.day()).add(1, 'day');
   } else {
@@ -93,7 +38,14 @@ function closestToFullHour(argArray){
   return closestIndex;
 }
 
-calculatePay = (family, start, end) => {
+const calculatePay = (argFamily, argStart, argEnd) => {
+  if(!argFamily || !argStart || !argEnd) return null;
+  const family = FAMILIES.filter(family => family.shortened === argFamily.toLowerCase())[0];
+  const start = parseTime(argv.start);
+  const end = parseTime(argv.end);
+
+  if(!family || !start || !end) return null;
+
   let startOfShift = moment(start, 'HH:mm');
   startOfShift = checkForNextDay(start);
 
@@ -133,6 +85,7 @@ calculatePay = (family, start, end) => {
   expectedPay = Number.parseFloat(expectedPay).toFixed(2); 
   
   console.log('You are expected to make $', expectedPay);
+  return expectedPay;
 }
 
 const argv = yargs
@@ -159,25 +112,22 @@ const argv = yargs
 const parseTime = (arg) => {
   const pattern = /^(\d{1,2}):(\d{2})(am|AM|pm|PM)?$/gm;
   const timeMatch = pattern.exec(arg);
-  if(timeMatch == null) {
-    return false;
-  }
+  if(timeMatch == null) return null;
+
   let hour = parseInt(timeMatch[1]);
   const minute = parseInt(timeMatch[2]);
   const sign = timeMatch[3];
   if(sign && sign.toLowerCase() == 'pm') {
     hour += 12;
   }
-  return moment({hour, minute})
+  return moment({hour, minute}).format('HH:mm');
 }
 
-console.log('\n');
-
 if(argv.family && argv.start && argv.end) {
-  const family = FAMILIES.filter(family => family.shortened === argv.family.toLowerCase())[0];
-  const start = parseTime(argv.start);
-  const end = parseTime(argv.end);
-  calculatePay(family, start, end);
+  calculatePay(argv.family, argv.start, argv.end);
 } else {
   console.log('For help getting started, type node client.js -h');
 }
+
+exports.parseTime = parseTime;
+exports.calculatePay = calculatePay;
