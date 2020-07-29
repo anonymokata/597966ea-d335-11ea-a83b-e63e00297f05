@@ -33,19 +33,20 @@ const checkForNextDay = (argMoment) => {
 
 const roundToNearestHour = (durationsArray) => {
   const totalDuration = durationsArray.reduce((total, duration) => total + duration, 0);
-  if(totalDuration % 60 !== 0) {
-    
-    const closestIndex = findClosestShiftToFullHour(durationsArray);
-  
+  const closestIndex = findClosestShiftToFullHour(durationsArray);
+  if(closestIndex) {
     durationsArray[closestIndex] = (60 - (totalDuration % 60) + durationsArray[closestIndex]);
   }
+
   return durationsArray;
 };
 
 function findClosestShiftToFullHour(argArray){
   const arrCopy = [...argArray];
-  let closestIndex = 0;
+  const totalDuration = arrCopy.reduce((total, duration) => total + duration, 0);
+  if(totalDuration % 60 === 0) return null;
   
+  let closestIndex = 0;
   for(let i = 0; i < arrCopy.length; i++) {
     arrCopy[i] = arrCopy[i] % 60;
     if(arrCopy[i] >= arrCopy[closestIndex] && arrCopy[i] < 60) {
