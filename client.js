@@ -11,7 +11,9 @@ const checkForNextDay = (argMoment) => {
 }
 
 const perMinute = (perHour) => {
-  return perHour / 60;
+  let result = perHour / 60;
+  if(!Number.isNaN(result)) { return result; }
+  else { return null }
 };
 
 const roundToNearestHour = (durationsArray) => {
@@ -131,3 +133,5 @@ if(argv.family && argv.start && argv.end) {
 
 exports.parseTime = parseTime;
 exports.calculatePay = calculatePay;
+exports.checkForNextDay = checkForNextDay;
+exports.perMinute = perMinute;

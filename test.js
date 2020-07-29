@@ -1,8 +1,18 @@
 const assert = require('assert');
 const moment = require('moment');
-const { calculatePay, FAMILIES, startOfDay, parseTime } = require('./client');
+const { calculatePay, FAMILIES, startOfDay, parseTime, perMinute, checkForNextDay } = require('./client');
 
 describe('client.js', function() {
+  describe('perMinute()', function() {
+    it('Should return a per hour pay rate at a per minute pay rate', function() {
+      assert.equal(.25, perMinute(15));
+    });
+  });
+  describe('perMinute()', function() {
+    it('Should return null if not passed a number', function() {
+      assert.equal(null, perMinute('green'));
+    });
+  });
   describe('parseTime()', function() {
     it('Should regex a passed in time military or signed, and return a moment', function() {
       const testMoment = moment().set('hour', 17).set('minute', 0);
@@ -15,12 +25,12 @@ describe('client.js', function() {
     });
   });
   describe('calculatePay()', function() {
-    it('Should not calculate without all 3 family, start, and end', function() {
+    it('Should not calculate without all bad arguments', function() {
       assert.equal(null, calculatePay(null, null, null));
     });
   });
   describe('calculatePay()', function() {
-    it('Should not calculate without a family, start, and end', function() {
+    it('Should not calculate without all 3 - family, start, and end', function() {
       assert.equal(null, calculatePay('a', null, null));
     });
   });
