@@ -38,11 +38,25 @@ function closestToFullHour(argArray){
   return closestIndex;
 }
 
+const parseTime = (arg) => {
+  const pattern = /^(\d{1,2}):(\d{2})(am|AM|pm|PM)?$/gm;
+  const timeMatch = pattern.exec(arg);
+  if(timeMatch == null) return null;
+
+  let hour = parseInt(timeMatch[1]);
+  const minute = parseInt(timeMatch[2]);
+  const sign = timeMatch[3];
+  if(sign && sign.toLowerCase() == 'pm') {
+    hour += 12;
+  }
+  return moment().set('hour', hour).set('minute', minute);
+}
+
 const calculatePay = (argFamily, argStart, argEnd) => {
   if(!argFamily || !argStart || !argEnd) return null;
   const family = FAMILIES.filter(family => family.shortened === argFamily.toLowerCase())[0];
-  const start = parseTime(argv.start);
-  const end = parseTime(argv.end);
+  const start = parseTime(argStart);
+  const end = parseTime(argEnd);
 
   if(!family || !start || !end) return null;
 
@@ -108,20 +122,6 @@ const argv = yargs
   .help()
   .alias('help', 'h')
   .argv;
-
-const parseTime = (arg) => {
-  const pattern = /^(\d{1,2}):(\d{2})(am|AM|pm|PM)?$/gm;
-  const timeMatch = pattern.exec(arg);
-  if(timeMatch == null) return null;
-
-  let hour = parseInt(timeMatch[1]);
-  const minute = parseInt(timeMatch[2]);
-  const sign = timeMatch[3];
-  if(sign && sign.toLowerCase() == 'pm') {
-    hour += 12;
-  }
-  return moment({hour, minute}).format('HH:mm');
-}
 
 if(argv.family && argv.start && argv.end) {
   calculatePay(argv.family, argv.start, argv.end);
