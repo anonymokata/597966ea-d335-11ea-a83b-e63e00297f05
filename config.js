@@ -49,11 +49,8 @@ const FAMILIES = [
   }
 ]
 
-const startOfDay = moment({
-  'hour': 17
-}).millisecond(0).second(0);
-
-const endOfDay = moment(startOfDay).add(11, 'hours').add(1, 'day');
+const startOfDay = moment().hour(17).minute(0).second(0).millisecond(0);
+const endOfDay = moment().hour(17).minute(0).millisecond(0).second(0).add(11, 'hour');
 
 
 exports.FAMILIES = FAMILIES;

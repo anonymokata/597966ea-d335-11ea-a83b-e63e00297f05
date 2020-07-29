@@ -1,9 +1,5 @@
 const assert = require('assert');
 const moment = require('moment');
-const {
-  FAMILIES, 
-  startOfDay, 
-} = require('./config');
 const { 
   perMinute, 
   parseTime, 
@@ -14,6 +10,10 @@ const {
 } = require('./client');
 
 describe('client.js', function() {
+  beforeEach(function () {
+    // resets startOfDay 
+    startOfDay = moment().hour(17).minute(0).second(0).millisecond(0);
+  });
   describe('perMinute()', function() {
     it('Should return a per hour pay rate at a per minute pay rate', function() {
       assert.equal(.25, perMinute(15));

@@ -40,10 +40,10 @@ const parseTime = (time) => {
 */
 const checkForNextDay = (argMoment) => {
   if (argMoment.hour() < 12) {
-    return argMoment.day(startOfDay.day()).add(1, 'day');
+    argMoment.add(1, 'day');
   } else {
-    return argMoment.day(startOfDay.day());
   }
+  return argMoment;
 }
 
 /*
@@ -92,13 +92,35 @@ const calculatePay = (argFamily, argStart, argEnd) => {
   const family = FAMILIES.filter(family => family.shortened === argFamily.toLowerCase())[0];
   const start = parseTime(argStart);
   const end = parseTime(argEnd);
-  if(!family || !start || !end) return null; // confirms validity of arguments
+
+  // confirms validity of arguments
+  if(!family) {
+    console.error('Please enter a correct family (A, B, or C)');
+    return null; 
+  }
+  if(!start || !end) {
+    console.error('Please enter a correct time. Can be either militay or signed. example "21:15".');
+    return null;
+  }
 
   let startOfShift = moment(start, 'HH:mm');
   startOfShift = checkForNextDay(start);
   let endOfShift = moment(end, 'HH:mm');
   endOfShift = checkForNextDay(end);
-  if (startOfShift.isBefore(startOfDay) || endOfShift.isAfter(endOfDay) || endOfShift.isBefore(startOfShift)) return null; // check time bounadries
+
+  // check time bounadries
+  if (startOfShift.isBefore(startOfDay)) {
+    console.error('The start of the shift must be no earlier than 5pm.');
+    return null;
+  }
+  if(endOfShift.isAfter(endOfDay)) {
+    console.error('The end of the shift must be no later than 4am.');
+    return null;
+  } 
+  if (endOfShift.isBefore(startOfShift)) {
+    console.error('The start of the shift must be before the end of the shift.');
+    return null;
+  }
 
   // creates array of shifts based on selected family
   let familyShifts = new Array(family.shifts.length);
