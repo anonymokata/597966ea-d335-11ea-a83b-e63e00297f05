@@ -1,8 +1,8 @@
 {
-  "name": "boilerplate",
-  "version": "1.0.1",
-  "description": "warning clear",
-  "main": "index.js",
+  "name": "babysitter-kata",
+  "version": "1.1",
+  "description": "",
+  "main": "client.js",
   "author": "Reece Lewellen",
   "license": "MIT",
   "scripts": {
