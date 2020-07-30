@@ -89,32 +89,32 @@ const calculatePay = (argFamily, argStart, argEnd) => {
   if(!argFamily || !argStart || !argEnd) return null; // makes sure all arguments are accounted for
 
   const family = FAMILIES.filter(family => family.shortened === argFamily.toLowerCase())[0];
-  let start = parseTime(argStart);
-  let end = parseTime(argEnd);
+  let startOfShift = parseTime(argStart);
+  let endOfShift = parseTime(argEnd);
 
   // confirms validity of arguments
   if(!family) {
     console.error('Please enter a correct family (A, B, or C)');
     return null; 
   }
-  if(!start || !end) {
+  if(!startOfShift || !endOfShift) {
     console.error('Please enter a correct time. Can be either militay or signed. example "21:15".');
     return null;
   }
 
-  start = checkForNextDay(start);
-  end = checkForNextDay(end);
+  startOfShift = checkForNextDay(startOfShift);
+  endOfShift = checkForNextDay(endOfShift);
 
   // check time bounadries
-  if (start.isBefore(startOfDay)) {
+  if (startOfShift.isBefore(startOfDay)) {
     console.error('The start of the shift must be no earlier than 5pm.');
     return null;
   }
-  if(end.isAfter(endOfDay)) {
+  if(endOfShift.isAfter(endOfDay)) {
     console.error('The end of the shift must be no later than 4am.');
     return null;
   } 
-  if (end.isBefore(start)) {
+  if (endOfShift.isBefore(startOfShift)) {
     console.error('The start of the shift must be before the end of the shift.');
     return null;
   }
@@ -128,11 +128,11 @@ const calculatePay = (argFamily, argStart, argEnd) => {
 
   // reduces shifts array based on actual start and end times
   for(let i = 0; i < familyShifts.length; i++) {
-    if(end.isSameOrBefore(familyShifts[i])) {
-      familyShifts[i] = end;
+    if(endOfShift.isSameOrBefore(familyShifts[i])) {
+      familyShifts[i] = endOfShift;
     }
-    if(start.isSameOrAfter(familyShifts[i])) {
-      familyShifts[i] = start;
+    if(startOfShift.isSameOrAfter(familyShifts[i])) {
+      familyShifts[i] = startOfShift;
     }
   };
 
@@ -140,7 +140,7 @@ const calculatePay = (argFamily, argStart, argEnd) => {
   let durations = new Array(familyShifts.length);
   for (let i = 0; i < familyShifts.length; i++) {
     if(i === 0) {
-      durations[i] = Math.ceil(moment.duration(familyShifts[i].diff(start)).asMinutes());
+      durations[i] = Math.ceil(moment.duration(familyShifts[i].diff(startOfShift)).asMinutes());
     } else {
       durations[i] = Math.ceil(moment.duration(familyShifts[i].diff(familyShifts[i - 1])).asMinutes());
     }
