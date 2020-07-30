@@ -41,7 +41,6 @@ const parseTime = (time) => {
 const checkForNextDay = (argMoment) => {
   if (argMoment.hour() < 12) {
     argMoment.add(1, 'day');
-  } else {
   }
   return argMoment;
 }
