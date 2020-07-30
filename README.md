@@ -1,6 +1,7 @@
 # Babysitter Kata
 
-This kata is designed to implement standard coding practices. It is a test driven project. which a few helper functions.
+This kata is designed to implement standard coding practices. It is a test driven project with a few helper functions for the overall calculatePay function.  
+
 ## Desired Result
 
 Kata will feature a babysitter, you.  
