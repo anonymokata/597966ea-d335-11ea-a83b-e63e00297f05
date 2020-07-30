@@ -31,8 +31,8 @@ node client.js [options]
 ### Options
 
 ```--family, -f A/B/C```     Must be A B or C  
-```--start, -s 5:00pm```     Can be either signed time (am/pm) or military  
-```--end, -e 7:00pm```       Can be either signed time (am/pm) or military
+```--start, -s "17:00"```     Can be either signed time (am/pm) or military in double quotes  
+```--end, -e "10:00pm"```       Can be either signed time (am/pm) or military in double quotes
 
 ## Tests
 

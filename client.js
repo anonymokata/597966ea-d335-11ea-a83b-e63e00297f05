@@ -192,7 +192,7 @@ const argv = yargs
 
 if(argv.family && argv.start && argv.end) {
   const pay = calculatePay(argv.family, argv.start, argv.end);
-  console.log('Expected pay: $', pay);
+  if (pay) console.log('Expected pay: $', pay);
 } else {
   console.log('For help getting started, type node client.js -h');
 }
