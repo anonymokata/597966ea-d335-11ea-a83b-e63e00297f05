@@ -9,7 +9,7 @@
     "test" : "mocha"
   },
   "dependencies": {
-    "mocha": "^8.0.1",
+    "mocha": "^8.4.0",
     "moment": "^2.26.0",
     "yargs": "^15.4.1"
   }
